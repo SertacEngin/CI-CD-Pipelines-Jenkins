@@ -1,4 +1,4 @@
-# CI-CD-with-Jenkins
+# CI/CD
 
 CI/CD is continuous integration/continuous delivery. CI is the process where we integrate a set of tools before delivering the application the the customer. And CD is the process where we deploy 
 our application. 
