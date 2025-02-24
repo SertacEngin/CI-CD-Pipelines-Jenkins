@@ -57,4 +57,80 @@ By default our EC2 instances won’t accept external traffic because of the defa
 With “ps -ef | grep jenkins” we can see that Jenkins runs on this EC2 instance on the port 8080. This port 8080 is not accessible from the 
 external world.
 
-So we can modify it in the security tab of the EC2 instance. Then click on the existing security groups. There is a default security group that is attached to our instance. And then edit the inbound
+So we can modify it in the security tab of the EC2 instance. Then click on the existing security groups. There is a default security group that is attached to our instance. And then edit the inbound rules.
+
+This is the traffic coming to our EC2 instance. And we add a rule there. We choose custom TCP for the type and TCP for the protocol. And for 
+the source we can choose anywhere (We choose my IP if we want it to be accessible only from our PC). For the type we can choose “All traffic” 
+if we want our EC2 instance to be accessible by everyone.
+
+We can verify if jenkins is accessible on this port. On the browser we go to public_IP_address_of_the_EC2:8080. And we should we Jenkins there 
+if it runs. We get the initial password from the link it shows on this page. We do it with “sudo cat the_link_there”. And we sign into Jenkins 
+with this password. And then we install the suggested plugins. 
+
+Then we can create our admin user. Then we have installed Jenkins.
+
+Jenkins master is the EC2 instance that we are using right now.
+
+We should only use Jenkins master for the scheduling purposes. Running everything in the Jenkins is not a good idea for 2 things. First, we 
+cannot load it too much. Seconds, some teams might need python 2 and some teams might need python 3. So we should not use Jenkins master for 
+everything also because dependency issues.
+
+So we use various Jenkinds nodes for different purposes. For example Jenkins node 1 runs Linux aplications and Jenkinds node 2 runs Windows 
+applications.
+
+But the problem here is that if there is no task for a specific Jenkins node (EC2 instance) it will sit idle. This is not the best practice to 
+let it sit idle. Auto scaling groups are not enough for this. As we cannot predict every workload we should come up with another solution other 
+than using EC2 instances.  
+
+As a solution, we use Jenkins with Docker as agents. So we run Jenkins pipelines on Docker containers. Docker containers are light in weight. 
+Containers are easily built and destroyed. For leight-weight applications we can go for Docker containers.
+
+About Docker: Containers include everything needed to run an application (code, dependencies, runtime, libraries). Each container runs in its 
+own environment, independent of the host system and other containers. Containers can be easily replicated and scaled up/down based on demand. 
+Uses fewer resources compared to traditional virtual machines (VMs) since containers share the host OS kernel. Developers can work in the same 
+environment as production, reducing "works on my machine" issues. Containers operate in isolated environments, reducing the impact of security 
+vulnerabilities. Containers can be updated, rolled back, and replaced seamlessly. Docker fits perfectly with microservices architecture.
+
+Why should we use Docker?
+✅ Faster deployments & testing
+✅ Reduces infrastructure costs
+✅ Works across different platforms & environments
+✅ Simplifies dependency management
+✅ Great for CI/CD & DevOps
+
+Now we will install Docker on our EC2 instance.
+sudo su -     → we switch to the root user.
+usermod -aG docker jenkins→ this allows Jenkins to run Docker commands without requiring sudo.
+usermod -aG docker ubuntu → This allows the ubuntu user to run Docker commands without sudo.
+systemctl restart docker → Restarts the Docker service to apply any changes made (like group modifications).
+-a → append (keep existing group memberships).
+-G → Add the user to a new group.
+
+Now with “su – jenkins” we switch to the Jenkins user. This user was created when we installed Jenkins. Then we can run “docker run hello-
+world”. If this is successful, that means now Jenkins user can run Docker containers.
+
+Then we restart our Jenkins. For that, we just add /restart at the end of the Jenkins url and click on yes. We do this because Jenkins 
+sometimes might not pick up the changes. 
+
+Now we can install the Docker Pipeline plugin in Jenkins. We need Jenkins to execute our pipeline on the Docker agent. For this required 
+configuration must be provided in the Jenkins file.
+
+Then in the plugins, we install Docker Pipeline. Then we restart our Jenkins again. We click on New Item. Then we see various ways of creating 
+Jenkins Pipelines there.
+
+We use Freestyle for small, quick automation tasks and Pipeline for full-scale DevOps workflows. But as DevOps engineers we should always go 
+with Pipelines.
+
+Now let’s create a small project. A simple jenkins pipeline to verify if the docker slave configuration is working as expected. 
+
+Jenkins is all about picking up the code from our local or version control and delivering it to production or any stating environment while 
+automating all the stages inbetween. If there are 10 stages, Jenkins acts as an orchestrator. SCM: Source Control Management.
+
+Jenkins files are written in Groovy-based syntax. If we need an extra step we can just add it into the steps in jenkins file.
+
+We can click on Pipeline Syntax and see sample steps. There is a pipeline script generator there that we can use to create pipelines.
+
+For our example we “Pipeline script from SCM” and fill other spaces as well. Enter the repositoy etc. and then we click on “build now”. Now it 
+is fetching the code from GitHub.
+
+In “Console Output” we can see what Jenkins has done. 
