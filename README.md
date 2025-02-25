@@ -201,7 +201,9 @@ overhead.
 
 A complete CI/CD workflow looks like this:
 1️⃣ Code Commit & Version Control (Continuous Integration - CI)
+
 Developers write and push code to a GitHub repository (main or feature branches).
+
 A webhook triggers a Jenkins pipeline whenever a commit is made.
 
 2️⃣ Build & Test
