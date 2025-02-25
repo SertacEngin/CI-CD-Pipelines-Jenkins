@@ -133,4 +133,63 @@ We can click on Pipeline Syntax and see sample steps. There is a pipeline script
 For our example we “Pipeline script from SCM” and fill other spaces as well. Enter the repositoy etc. and then we click on “build now”. Now it 
 is fetching the code from GitHub.
 
-In “Console Output” we can see what Jenkins has done. 
+In “Console Output” we can see what Jenkins has done.
+
+We can list the docker containers with “docker ps”. This only shows currently running containers.
+
+“docker ps -a” shows all containers including stopped, exited, and runnung ones.
+
+We see there there is currently no running docker containers. It’s because our Jenkins master run a container for our job and then it stopped 
+it. With this we save a lot of compute resources. If we were to do this with VMs, we would have to manage all the VMs in the future. For 
+example we would  have to patch them from central OS 8 to 9. Today we might have node.js 15 but tomorrow we might need 16. But by using docker 
+containers, we just change the version in the jenkinsfile to work with another version of our software. This is the advantage of using docker 
+as agent. If we need more stages we can just add them to the stages in the jenkinsfile.
+
+Now let’s take a look at a multi-stage-multi-agent application. Let’s say we have a 3-tier application where we have frontend, backend, and 
+database. And our database CI/CD has to be executed on CentOS. CentOS (Community ENTerprise Operating System) was a free, open-source Linux 
+distribution based on Red Hat Enterprise Linux (RHEL). It was widely used for servers, cloud computing, and enterprise environments due to its 
+stability and long-term support.
+
+However, CentOS Linux was discontinued in December 2021 and replaced by CentOS Stream, which is now a rolling-release upstream version of RHEL.
+
+But let’s say our frontend and backend application have to be implemented on Ubuntu VMs. Or for one VM we need maven and for the other one we 
+need node.js This might be a problem when we use worker nodes (VMs). There would be maintenance overhead. 
+
+The solutions here is to create multiple stages in jenkinsfile. And we can set the agent as none in the pipeline. And we can choose a different 
+agent for each step. This is how we deal with multi-tier applications. Let’s run this on jenkins. This is multi agent because we are using 
+multiple docker containers dedicated to their own case. 
+
+If we do it right after clicking on “build now”, we can see that our containers have been created with “docker ps”. And then when we execute 
+this command again we see that there is no active docker containers. Because our containers are stopped now. With this approach not only we 
+save cost but we also save time. If we were to do this with VMs, for one VM we had to maintain maven and for the other one we had to maintain 
+node.js. With this approach we avoid the maintenance activity.
+
+Ansible is a configuration management tool. It can deploy our code on Kubernetes clusters but it is not the best practice. ArgoCD can not only 
+deploy our code on Kubernetes clusters but it can also monitor the state in our Kubernetes cluster. ArgoCD makes sure that the state is always 
+the same because ArgoCD is an Kubernetes controller. So ArgoCD is deployed in our Kubernetes cluster itself. 
+
+What is ArgoCD?
+ArgoCD is a declarative, GitOps-based continuous delivery (CD) tool for Kubernetes. It ensures that the desired application state defined in a 
+Git repository matches the actual state in a Kubernetes cluster.
+
+What Do We Use ArgoCD For?
+✅ Automated Kubernetes Deployments – ArgoCD continuously syncs applications from Git to Kubernetes.
+✅ GitOps Workflow – Git is the single source of truth for infrastructure and application configurations.
+✅ Rollback and History Tracking – Easily revert to previous application versions.
+✅ Multi-Cluster Management – Deploy and monitor applications across multiple Kubernetes clusters.
+✅ Drift Detection – Alerts when the actual state differs from the desired state in Git.
+✅ Self-Healing – Automatically corrects unintended changes in the cluster.
+✅ Declarative Configuration – Uses Kubernetes manifests (YAML), Helm charts, and Kustomize for deployments.
+
+How It Works (Basic Flow):
+    Define the application in Git (Helm, Kustomize, or plain YAML).
+    ArgoCD watches Git for changes.
+    ArgoCD syncs changes to Kubernetes.
+    Drift detection triggers alerts or automatic corrections if manual changes are made in the cluster.
+Use Case Example:
+A company using Kubernetes and GitOps can set up ArgoCD to automatically deploy microservices whenever developers push changes to a Git 
+repository. This ensures consistency, traceability, and faster rollbacks in case of failures.
+Single Source of Truth (SSOT) is a centralized system where all data, configurations, or processes are stored, ensuring that everyone refers to 
+the same, accurate, and up-to-date information.
+In our case, ArgoCD will notice a change in the repository and it will deploy the application on the Kubernetes cluster. 
+
