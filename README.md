@@ -193,3 +193,8 @@ Single Source of Truth (SSOT) is a centralized system where all data, configurat
 the same, accurate, and up-to-date information.
 In our case, ArgoCD will notice a change in the repository and it will deploy the application on the Kubernetes cluster. 
 
+How do you handle issues with your worker nodes when go down or aren’t responsive: I log into this worker node and try to understand the 
+problem. I look at the worker nodes’ heatlh. I can use a python script to check their health. Maybe the CPU or RAM is utilized too much. We can 
+take certain actions when the usage reaches for example 80% by having an auto scaling group. But using containers as agents whenever we have a 
+jenkins job to run is a better idea. This way we ensure that our agents are never down and costs are kept low alongside with maintenance 
+overhead. 
