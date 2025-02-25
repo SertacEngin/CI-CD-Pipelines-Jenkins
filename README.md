@@ -206,40 +206,34 @@ Developers write and push code to a GitHub repository (main or feature branches)
 A webhook triggers a Jenkins pipeline whenever a commit is made.
 
 2️⃣ Build & Test
-Jenkins pulls the latest code and performs:
-Code Linting (e.g., using Flake8 for Python)
+Jenkins pulls the latest code and performs.
+Code Linting (e.g., using Flake8 for Python).
 Unit Tests (via pytest or unittest).
 Integration Tests to validate API communication.
 If tests fail, the pipeline stops, and developers are notified via Slack/Email.
 
 3️⃣ Build & Push Docker Image
-After successful testing, Jenkins:
-Builds a Docker image with the latest application code.
+After successful testing, Jenkins builds a Docker image with the latest application code.
 Tags the image with the Git commit hash or build number.
 Pushes the image to DockerHub (or AWS ECR).
 
 4️⃣ Deployment & Kubernetes Update (Continuous Deployment - CD)
-Once the Docker image is available, Jenkins:
-Fetches the Kubernetes manifests from a GitOps repository
-Updates the deploy.yaml file with the new Docker image tag
-Commits and pushes the updated manifest back to GitHub
-ArgoCD, which continuously watches this repository, detects the change and:
-Pulls the updated manifests
-Deploys the new version to the Kubernetes cluster on AWS
-Ensures a zero-downtime rollout using a Rolling Update strategy
+Once the Docker image is available, Jenkins fetches the Kubernetes manifests from a GitOps repository.
+Updates the deploy.yaml file with the new Docker image tag.
+Commits and pushes the updated manifest back to GitHub.
+ArgoCD, which continuously watches this repository, detects the change and pulls the updated manifests.
+Deploys the new version to the Kubernetes cluster on AWS.
+Ensures a zero-downtime rollout using a Rolling Update strategy.
 
 5️⃣ Monitoring & Feedback Loop
-After deployment, we use:
-Prometheus & Grafana for performance monitoring
-Loki or ELK stack for log aggregation
-Alerting via Slack if an issue is detected
+After deployment, we use Prometheus & Grafana for performance monitoring, Loki or ELK stack for log aggregation, Alerting via Slack if an issue is detected.
 If a deployment fails, Jenkins automatically rolls back to the previous stable version.
 
 Why This CI/CD Workflow is Effective?
-Automates Testing & Deployment → Reduces manual work
-Ensures Code Quality → Catch bugs early
-Uses GitOps for Deployment → Fully traceable and auditable
-Scales Efficiently → Kubernetes handles traffic spikes automatically
+Automates Testing & Deployment → Reduces manual work.
+Ensures Code Quality → Catch bugs early.
+Uses GitOps for Deployment → Fully traceable and auditable.
+Scales Efficiently → Kubernetes handles traffic spikes automatically.
 
 If were were to improve this CI/CD workflow further, I would integrate feature flagging for safer rollouts, implement Canary Deployments for 
 gradual releases, and enhance observability with distributed tracing using Jaeger.
