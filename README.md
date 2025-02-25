@@ -208,15 +208,15 @@ A webhook triggers a Jenkins pipeline whenever a commit is made.
 2️⃣ Build & Test
 Jenkins pulls the latest code and performs:
 Code Linting (e.g., using Flake8 for Python)
-Unit Tests (via pytest or unittest)
-Integration Tests to validate API communication
+Unit Tests (via pytest or unittest).
+Integration Tests to validate API communication.
 If tests fail, the pipeline stops, and developers are notified via Slack/Email.
 
 3️⃣ Build & Push Docker Image
 After successful testing, Jenkins:
-Builds a Docker image with the latest application code
-Tags the image with the Git commit hash or build number
-Pushes the image to DockerHub (or AWS ECR)
+Builds a Docker image with the latest application code.
+Tags the image with the Git commit hash or build number.
+Pushes the image to DockerHub (or AWS ECR).
 
 4️⃣ Deployment & Kubernetes Update (Continuous Deployment - CD)
 Once the Docker image is available, Jenkins:
